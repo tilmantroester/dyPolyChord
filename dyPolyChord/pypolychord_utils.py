@@ -26,7 +26,8 @@ class RunPyPolyChord(object):
     """Callable class for running PolyChord in Python with specified
     the settings."""
 
-    def __init__(self, likelihood, prior, ndim, nderived=0):
+    def __init__(self, likelihood, prior, ndim, nderived=0, 
+                 dumper=pypolychord.default_dumper):
         """
         Specify likelihood, prior and number of dimensions in calculation.
 
@@ -36,11 +37,13 @@ class RunPyPolyChord(object):
         prior: func
         ndim: int
         nderived: int, optional
+        dumper: func, optional
         """
         self.likelihood = likelihood
         self.prior = prior
         self.ndim = ndim
         self.nderived = nderived
+        self.dumper = dumper
 
     def __call__(self, settings_dict, comm=None):
         """
@@ -66,4 +69,5 @@ class RunPyPolyChord(object):
                 settings = None
             settings = comm.bcast(settings, root=0)
         pypolychord.run_polychord(self.likelihood, self.ndim, self.nderived,
-                                  settings, prior=self.prior)
+                                  settings, prior=self.prior, 
+                                  dumper=self.dumper)
